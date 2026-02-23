@@ -35,11 +35,16 @@ app.use(helmet({
 }));
 
 // Session configuration
+if (!process.env.MONGODB_URI) {
+    console.error('CRITICAL ERROR: MONGODB_URI is not defined in environment variables.');
+    process.exit(1);
+}
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'gym_fallback_secret',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.default.create({ mongoUrl: process.env.MONGODB_URI }),
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     cookie: {
         maxAge: 1000 * 60 * 60 * 24, // 1 day
         secure: IS_PROD, // Only send cookie over HTTPS in production
