@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> | DOBHAL S.B. HEALTH CLUB
+    </title>
+    <link rel="icon" type="image/png" href="/logo/logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for interactivity -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            /* Slate 50 - Very Light Gray/Blue */
+            color: #0f172a;
+            /* Slate 950 - Deep Charcoal/Slate */
+        }
+
+        .container-custom {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Standard Shadow for Professional Look */
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white text-slate-900 shadow-sm border-b border-slate-200 sticky top-0 z-[100]"
+        x-data="{ mobileMenuOpen: false }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Brand -->
+                <div class="flex items-center space-x-10">
+                    <a href="/dashboard" class="flex items-center space-x-3 group">
+                        <div
+                            class="w-10 h-10 bg-[#3A9AFF] rounded-xl flex items-center justify-center font-bold text-white group-hover:bg-[#3A9AFF]/90 transition-all duration-300">
+                            DH</div>
+                        <span class="text-2xl font-bold tracking-tight uppercase whitespace-nowrap">DOBHAL S.B. </span>
+                    </a>
+                    <% if (isAuthenticated) { %>
+                        <div class="hidden lg:flex space-x-2 text-sm font-semibold">
+                            <% const
+                                navItemClass="px-5 py-2 rounded-xl font-semibold text-sm transition-all duration-300 ease-in-out active:scale-95 focus:outline-none"
+                                ; const activeClass="bg-[#3A9AFF] text-white shadow shadow-blue-500/20" ; const
+                                inactiveClass="text-slate-600 bg-slate-50 hover:bg-slate-100" ; %>
+                                <a href="/dashboard"
+                                    class="<%= navItemClass %> <%= title === 'Profit & Loss Dashboard' ? activeClass : inactiveClass %>">Dashboard</a>
+                                <a href="/member-fees"
+                                    class="<%= navItemClass %> <%= title === 'Member Entry' ? activeClass : inactiveClass %>">Entry</a>
+                                <a href="/defaulters"
+                                    class="<%= navItemClass %> <%= title === 'Defaulter Management' ? activeClass : inactiveClass %>">Defaulters</a>
+                                <a href="/expenses"
+                                    class="<%= navItemClass %> <%= title === 'Gym Expenses' ? activeClass : inactiveClass %>">Expenses</a>
+                        </div>
+                        <% } %>
+                </div>
+
+                <!-- Admin Info / Mobile Toggle -->
+                <div class="flex items-center space-x-6">
+                    <% if (isAuthenticated) { %>
+                        <div class="hidden md:flex items-center space-x-3 border-r border-slate-200 pr-5">
+                            <a href="/profile" class="flex items-center gap-3 group/user">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold group-hover/user:bg-[#3A9AFF] group-hover/user:text-white transition-all">
+                                    <%= (adminUser && (adminUser.name || adminUser.username) ? (adminUser.name ||
+                                        adminUser.username).charAt(0).toUpperCase() : 'A' ) %>
+                                </div>
+                                <div class="text-left">
+                                    <p
+                                        class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">
+                                        Signed in as</p>
+                                    <p
+                                        class="text-sm font-bold text-slate-900 uppercase tracking-tight group-hover/user:text-[#3A9AFF] transition-colors">
+                                        <%= adminUser ? (adminUser.name || adminUser.username) : 'Admin' %>
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                        <a href="/login/logout"
+                            class="hidden sm:inline-block px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest border border-slate-200 text-slate-400 hover:border-[#3A9AFF] hover:text-[#3A9AFF] hover:bg-[#3A9AFF]/5 transition-all duration-300">Logout</a>
+
+                        <!-- Mobile Burger Button -->
+                        <button @click="mobileMenuOpen = true"
+                            class="lg:hidden p-3 rounded-xl bg-slate-100 text-slate-600 hover:text-slate-900 transition-all active:scale-95">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <% } else { %>
+                            <a href="/login"
+                                class="bg-[#3A9AFF] text-white px-7 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-500/40 transition-all hover:bg-[#3A9AFF]/90 active:scale-95">Login</a>
+                            <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Side Drawer -->
+        <div x-show="mobileMenuOpen" class="fixed inset-0 z-[150] lg:hidden" style="display: none;">
+            <!-- Backdrop -->
+            <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0" @click="mobileMenuOpen = false"
+                class="fixed inset-0 bg-slate-950/80 backdrop-blur-md"></div>
+
+            <!-- Side Menu Content -->
+            <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="-translate-x-full"
+                class="fixed inset-y-0 left-0 w-80 bg-white shadow-2xl flex flex-col p-8 space-y-10 border-r border-slate-200">
+
+                <div class="flex justify-between items-center">
+                    <a href="/dashboard" class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 bg-[#3A9AFF] rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/40">
+                            DH</div>
+                        <span class="text-xl font-extrabold tracking-tighter uppercase whitespace-nowrap">DOBHAL S.B.
+                            </span>
+                    </a>
+                    <button @click="mobileMenuOpen = false"
+                        class="p-2 text-slate-500 hover:text-white transition-colors">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="flex flex-col space-y-3">
+                    <% if (isAuthenticated) { %>
+                        <a href="/dashboard"
+                            class="flex items-center px-5 py-4 rounded-2xl text-base font-bold transition-all duration-300 <%= title === 'Profit & Loss Dashboard' ? 'bg-[#3A9AFF] text-white shadow-lg shadow-blue-500/40' : 'text-black hover:text-[#3A9AFF] hover:bg-slate-50' %>">
+                            <span class="mr-4 text-xl"><i class="fa-solid fa-chart-line"></i></span> Dashboard
+                        </a>
+                        <a href="/member-fees"
+                            class="flex items-center px-5 py-4 rounded-2xl text-base font-bold transition-all duration-300 <%= title === 'Member Entry' ? 'bg-[#3A9AFF] text-white shadow-lg shadow-blue-500/40' : 'text-black hover:text-[#3A9AFF] hover:bg-slate-50' %>">
+                            <span class="mr-4 text-xl"><i class="fa-solid fa-user-group"></i></span> Member Entry
+                        </a>
+                        <a href="/defaulters"
+                            class="flex items-center px-5 py-4 rounded-2xl text-base font-bold transition-all duration-300 <%= title === 'Defaulter Management' ? 'bg-[#3A9AFF] text-white shadow-lg shadow-blue-500/40' : 'text-black hover:text-[#3A9AFF] hover:bg-slate-50' %>">
+                            <span class="mr-4 text-xl"><i class="fa-solid fa-exclamation"></i></span> Defaulters
+                        </a>
+                        <a href="/profile"
+                            class="flex items-center px-5 py-4 rounded-2xl text-base font-bold transition-all duration-300 <%= title === 'Admin Profile' ? 'bg-[#3A9AFF] text-white shadow-lg shadow-blue-500/40' : 'text-black hover:text-[#3A9AFF] hover:bg-slate-50' %>">
+                            <span class="mr-4 text-xl"><i class="fa-solid fa-user-gear"></i></span> My Profile
+                        </a>
+                        <a href="/expenses"
+                            class="flex items-center px-5 py-4 rounded-2xl text-base font-bold transition-all duration-300 <%= title === 'Gym Expenses' ? 'bg-[#3A9AFF] text-white shadow-lg shadow-blue-500/40' : 'text-black hover:text-[#3A9AFF] hover:bg-slate-50' %>">
+                            <span class="mr-4 text-xl"><i class="fa-solid fa-receipt"></i></span> Expenses
+                        </a>
+
+                        <div class="mt-8 pt-8 border-t border-slate-800">
+                            <a href="/login/logout"
+                                class="flex items-center px-5 py-4 rounded-2xl text-base font-bold text-red-500 transition-all">
+                                <span class="mr-4 text-xl"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+                                Logout
+                            </a>
+                        </div>
+                        <% } %>
+                </div>
+
+                <% if (isAuthenticated) { %>
+                    <div class="mt-auto pt-8 border-t border-slate-800 flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold">
+                            <%= (adminUser && (adminUser.name || adminUser.username) ? (adminUser.name ||
+                                adminUser.username).charAt(0).toUpperCase() : 'A' ) %>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">
+                                Signed in as</p>
+                            <p class="text-sm font-bold text-slate-900 uppercase tracking-tight">
+                                <%= adminUser ? (adminUser.name || adminUser.username) : 'Admin' %>
+                            </p>
+                        </div>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8 sm:px-6 lg:py-12 max-w-7xl">
+        <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-50 border-t border-slate-200 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">
+                DOBHAL S.B. HEALTH CLUB &copy; 2026. <span class="text-[#3A9AFF]/50">POWERED BY GYMPRO CMS</span>
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>

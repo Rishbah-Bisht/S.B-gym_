@@ -1,0 +1,218 @@
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <h1 class="text-2xl sm:text-3xl font-bold text-slate-800">Gym Expenses</h1>
+    <div class="flex gap-2 w-full sm:w-auto">
+        <a href="/reports/expenses/pdf?month=<%= month %>"
+            class="flex-1 sm:flex-none text-center bg-white text-[#3A9AFF] border border-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition font-bold text-sm">
+            PDF Export
+        </a>
+        <button onclick="document.getElementById('expenseModal').classList.remove('hidden')"
+            class="flex-[2] sm:flex-none bg-[#3A9AFF] text-white px-5 py-2.5 rounded-xl hover:bg-[#3A9AFF]/90 transition font-semibold text-sm">
+            + Add Expense
+        </button>
+    </div>
+</div>
+
+<!-- Filter & Summary - Simple -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div class="lg:col-span-2 bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200">
+        <form action="/expenses" method="GET" class="flex flex-col sm:flex-row gap-4 items-end">
+            <div class="w-full sm:flex-1">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Period Month</label>
+                <input type="month" name="month" value="<%= month %>"
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none text-sm transition">
+            </div>
+            <div class="w-full sm:flex-1">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Category</label>
+                <select name="category"
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none text-sm font-medium">
+                    <option value="">All Categories</option>
+                    <option value="Rent" <%=category==='Rent' ? 'selected' : '' %>>Rent</option>
+                    <option value="Electricity" <%=category==='Electricity' ? 'selected' : '' %>>Electricity
+                    </option>
+                    <option value="Trainer Salary" <%=category==='Trainer Salary' ? 'selected' : '' %>>Trainer
+                        Salary</option>
+                    <option value="Equipment" <%=category==='Equipment' ? 'selected' : '' %>>Equipment</option>
+                    <option value="Misc" <%=category==='Misc' ? 'selected' : '' %>>Misc</option>
+                </select>
+            </div>
+            <button type="submit"
+                class="w-full sm:w-auto bg-slate-800 text-white px-8 py-2.5 rounded-xl hover:bg-slate-900 transition font-semibold text-sm">Filter</button>
+        </form>
+    </div>
+    <div
+        class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center border-l-4 border-l-rose-500">
+        <div class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Expenses</div>
+        <div class="text-2xl sm:text-3xl font-bold text-rose-600 tracking-tight">₹<%=
+                totalAmount.toLocaleString('en-IN') %>
+        </div>
+    </div>
+</div>
+
+<!-- Expenses Table - Clean -->
+<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <div class="overflow-x-auto scrollbar-hide py-1">
+        <table class="w-full text-left min-w-[700px]">
+            <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Description</th>
+                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Category</th>
+                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Date</th>
+                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                        Amount</th>
+                    <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                        Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                <% if (expenses.length===0) { %>
+                    <tr>
+                        <td colspan="5" class="px-6 py-16 text-center text-slate-400 text-sm italic">No records
+                            found.</td>
+                    </tr>
+                    <% } %>
+                        <% expenses.forEach(exp=> { %>
+                            <tr class="hover:bg-slate-50 transition duration-150">
+                                <td class="px-6 py-4 font-bold text-slate-900 text-sm italic">
+                                    <%= exp.title %>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">
+                                        <%= exp.category %>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-xs font-medium text-slate-500">
+                                    <%= new Date(exp.expenseDate).toLocaleDateString('en-IN', {day:'2-digit',
+                                        month:'short', year:'numeric'}) %>
+                                </td>
+                                <td class="px-6 py-4 font-black text-slate-900 text-sm text-right italic">₹<%=
+                                        exp.amount.toLocaleString('en-IN') %>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="openDeleteModal('<%= exp._id %>', '<%= exp.title %>')"
+                                        class="text-rose-500 hover:text-rose-700 transition-colors text-xs font-black uppercase italic underline">Delete</button>
+                                </td>
+                            </tr>
+                            <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+<!-- Add Expense Modal -->
+<div id="expenseModal" class="fixed inset-0 z-[200] hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')">
+    </div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg p-6">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+            <div class="bg-slate-900 p-6 text-white text-center">
+                <h2 class="text-2xl font-bold uppercase tracking-tight">Add Gym Expense</h2>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Record new outgoing cost</p>
+            </div>
+            <form action="/expenses" method="POST" class="p-8 space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label
+                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Expense
+                            Title / Description</label>
+                        <input type="text" name="title" required placeholder="e.g. Monthly Rent"
+                            class="w-full px-5 py-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-[#3A9AFF] outline-none text-sm font-bold transition">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Category</label>
+                        <select name="category" required
+                            class="w-full px-5 py-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-[#3A9AFF] outline-none text-sm font-bold transition">
+                            <option value="Rent">Rent</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Trainer Salary">Trainer Salary</option>
+                            <option value="Equipment">Equipment</option>
+                            <option value="Misc">Misc</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Amount
+                            (₹)</label>
+                        <input type="number" name="amount" required
+                            class="w-full px-5 py-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-[#3A9AFF] outline-none text-sm font-bold transition">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Payment
+                            Mode</label>
+                        <select name="paymentMode" required
+                            class="w-full px-5 py-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-[#3A9AFF] outline-none text-sm font-bold transition">
+                            <option value="Cash">Cash</option>
+                            <option value="UPI / Online">UPI / Online</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Expense
+                            Date</label>
+                        <input type="date" name="expenseDate" value="<%= new Date().toISOString().split('T')[0] %>"
+                            required
+                            class="w-full px-5 py-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-[#3A9AFF] outline-none text-sm font-bold transition">
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="document.getElementById('expenseModal').classList.add('hidden')"
+                        class="flex-1 px-6 py-3.5 rounded-2xl bg-slate-100 text-slate-500 text-sm font-black uppercase tracking-widest hover:bg-slate-200 transition">Cancel</button>
+                    <button type="submit"
+                        class="flex-[2] px-6 py-3.5 rounded-2xl bg-[#3A9AFF] text-white text-sm font-black uppercase tracking-widest hover:bg-[#3A9AFF]/90 shadow-lg shadow-blue-500/30 transition">Save
+                        Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Secure Delete Modal -->
+<div id="deleteModal" class="fixed inset-0 z-[200] hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')">
+    </div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+            <div class="bg-rose-600 p-6 text-white text-center">
+                <h2 class="text-2xl font-black italic uppercase tracking-tight">Security Check</h2>
+                <p id="deleteExpenseName" class="text-rose-100 text-xs font-bold uppercase tracking-widest mt-1">Expense
+                    Title</p>
+            </div>
+            <form id="deleteForm" method="POST" class="p-8 space-y-6">
+                <div class="bg-rose-50 border border-rose-100 p-4 rounded-2xl">
+                    <p class="text-rose-700 text-xs font-bold leading-relaxed">WARNING: You are about to delete an
+                        expense record. This action will also revert the financial summary. Please enter your admin
+                        password to proceed.</p>
+                </div>
+                <div>
+                    <label
+                        class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Admin
+                        Password Pin</label>
+                    <input type="password" name="adminPassword" placeholder="Confirm identity" required
+                        class="w-full px-5 py-3 rounded-2xl border border-rose-200 focus:ring-2 focus:ring-rose-600 outline-none text-sm font-bold transition">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="document.getElementById('deleteModal').classList.add('hidden')"
+                        class="flex-1 px-6 py-3.5 rounded-2xl bg-slate-100 text-slate-500 text-sm font-black uppercase tracking-widest hover:bg-slate-200 transition">Cancel</button>
+                    <button type="submit"
+                        class="flex-[2] px-6 py-3.5 rounded-2xl bg-rose-600 text-white text-sm font-black uppercase tracking-widest hover:bg-rose-700 shadow-lg shadow-rose-500/30 transition">Delete
+                        Permanently</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeleteModal(id, title) {
+        document.getElementById('deleteExpenseName').innerText = title;
+        document.getElementById('deleteForm').action = '/expenses/delete/' + id;
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+</script>

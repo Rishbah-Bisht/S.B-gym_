@@ -1,0 +1,135 @@
+<div class="space-y-10">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+        <div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight uppercase">Financial Dashboard</h1>
+            <p class="text-slate-400 text-[10px] font-bold mt-1 uppercase tracking-widest">Business Performance Overview
+            </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <form action="/dashboard" method="GET" class="flex gap-2 w-full sm:w-auto">
+                <input type="month" name="month" value="<%= month %>"
+                    class="flex-grow sm:flex-grow-0 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 font-bold outline-none focus:ring-2 focus:ring-[#3A9AFF] text-sm transition-all">
+                <button type="submit"
+                    class="bg-[#3A9AFF] text-white px-6 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest hover:bg-[#3A9AFF]/90 transition-all active:scale-95">Filter</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Total Income -->
+        <div
+            class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between border-l-4 border-l-emerald-500">
+            <div>
+                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Total Income</h3>
+                <p class="text-3xl font-bold text-emerald-600 tracking-tight">₹<%=
+                        summary.totalRevenue.toLocaleString('en-IN') %>
+                </p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-emerald-600/50 uppercase tracking-widest">
+                <span class="mr-1">●</span> Income streams active
+            </div>
+        </div>
+
+        <!-- Total Expenses -->
+        <div
+            class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between border-l-4 border-l-rose-500">
+            <div>
+                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Total Expenses</h3>
+                <p class="text-3xl font-bold text-rose-600 tracking-tight">₹<%=
+                        summary.totalExpenses.toLocaleString('en-IN') %>
+                </p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-rose-600/50 uppercase tracking-widest">
+                <span class="mr-1">●</span> Outgoing costs
+            </div>
+        </div>
+
+        <!-- Net Balance -->
+        <div class="bg-neutral-600 p-6 rounded-3xl shadow-xl shadow-slate-900/20 flex flex-col justify-between">
+            <div>
+                <h3 class="text-[10px] font-bold text-white uppercase tracking-widest mb-3">Net Balance</h3>
+                <p
+                    class="text-3xl font-bold tracking-tight <%= summary.netResult >= 0 ? 'text-emerald-400' : 'text-rose-400' %>">
+                    ₹<%= summary.netResult.toLocaleString('en-IN') %>
+                </p>
+            </div>
+            <div class="mt-4">
+                <span
+                    class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest <%= summary.netResult >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400' %>">
+                    <%= summary.netResult>= 0 ? 'Performance High' : 'Attention Required' %>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts/Reports Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Spending Breakdown -->
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-xl font-bold text-slate-900 tracking-tight">Expense Distribution
+                </h3>
+                <span class="px-3 py-1 bg-slate-50 rounded-lg text-[10px] font-bold text-slate-400 uppercase">Monthly
+                    Data</span>
+            </div>
+            <div class="space-y-6">
+                <% Object.entries(expenseByCategory).forEach(([cat, amt])=> { %>
+                    <div>
+                        <div class="flex justify-between text-[11px] mb-2">
+                            <span class="font-bold text-slate-400 uppercase tracking-widest">
+                                <%= cat %>
+                            </span>
+                            <span class="font-bold text-slate-900">₹<%= amt.toLocaleString('en-IN') %></span>
+                        </div>
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-[#3A9AFF] rounded-full"
+                                style="width: <%= totalExpenses > 0 ? Math.round((amt/totalExpenses)*100) : 0 %>%;">
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                        <% if (Object.keys(expenseByCategory).length===0) { %>
+                            <div class="flex flex-col items-center justify-center py-12 text-slate-500">
+                                <span class="text-4xl mb-4">📉</span>
+                                <p class="text-sm font-bold uppercase tracking-widest">No data records found</p>
+                            </div>
+                            <% } %>
+            </div>
+        </div>
+
+        <!-- PDF Exports -->
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+            <h3 class="text-xl font-bold text-slate-900 tracking-tight mb-8">Financial Documents
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a href="/reports/fees/pdf?month=<%= month %>"
+                    class="p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-[#3A9AFF] transition-all group flex flex-col justify-between h-32">
+                    <div
+                        class="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover:text-[#3A9AFF] transition-colors">
+                        Revenue Report</div>
+                    <div class="text-lg font-bold text-slate-900 group-hover:translate-x-1 transition-transform">
+                        Download
+                        PDF <span class="text-[#3A9AFF]">→</span></div>
+                </a>
+                <a href="/reports/expenses/pdf?month=<%= month %>"
+                    class="p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-[#3A9AFF] transition-all group flex flex-col justify-between h-32">
+                    <div
+                        class="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover:text-[#3A9AFF] transition-colors">
+                        Cost Analysis</div>
+                    <div class="text-lg font-bold text-slate-900 group-hover:translate-x-1 transition-transform">
+                        Download
+                        PDF <span class="text-[#3A9AFF]">→</span></div>
+                </a>
+                <a href="/defaulters?month=<%= month %>"
+                    class="p-6 bg-slate-900 rounded-2xl sm:col-span-2 flex items-center justify-between hover:bg-slate-800 transition-all group">
+                    <div class="text-sm font-bold text-white uppercase tracking-widest">
+                        Open Member Defaulters Portal</div>
+                    <span
+                        class="text-2xl font-bold text-[#3A9AFF] group-hover:translate-x-2 transition-transform">→</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

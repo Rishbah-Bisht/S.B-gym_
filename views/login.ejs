@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Admin | Management Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .gym-grid {
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .input-focus:focus-within {
+            border-color: #3A9AFF;
+            box-shadow: 0 0 0 4px rgba(58, 154, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="gym-grid min-h-screen flex items-center justify-center p-4 sm:p-6">
+
+    <div class="w-full max-w-md">
+        <!-- Logo & Header -->
+        <div class="text-center mb-8">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 bg-[#3A9AFF] rounded-2xl shadow-xl shadow-blue-500/20 mb-6">
+                <span class="text-white font-extrabold text-2xl tracking-tighter">DH</span>
+            </div>
+            <h1 class="text-slate-900 text-3xl font-extrabold tracking-tight mb-2 uppercase">DOBHAL S.B. <span
+                    class="text-[#3A9AFF]">HEALTH CLUB</span></h1>
+            <p class="text-slate-400 text-[10px] font-bold tracking-widest uppercase">Management Portal Access</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-8 sm:p-10">
+
+                <% if (typeof error !=='undefined' && error) { %>
+                    <div
+                        class="flex items-center gap-3 bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl mb-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-xs font-bold uppercase tracking-tight">
+                            <%= error %>
+                        </span>
+                    </div>
+                    <% } %>
+
+                        <form action="/login" method="POST" class="space-y-6">
+                            <!-- Mobile Number -->
+                            <div class="space-y-2">
+                                <label
+                                    class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Registered
+                                    Mobile</label>
+                                <div
+                                    class="relative flex items-center group input-focus border border-slate-200 rounded-xl transition-all duration-200">
+                                    <div class="pl-4 text-slate-300 group-focus-within:text-[#3A9AFF]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                                            <path d="M12 18h.01" />
+                                        </svg>
+                                    </div>
+                                    <input type="text" name="phone" required placeholder="0000 000 000" autocomplete="off"
+                                        class="w-full px-4 py-4 bg-transparent outline-none text-slate-900 font-bold placeholder:text-slate-200 text-sm">
+                                </div>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="space-y-2">
+                                <label
+                                    class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Security
+                                    Password</label>
+                                <div
+                                    class="relative flex items-center group input-focus border border-slate-200 rounded-xl transition-all duration-200">
+                                    <div class="pl-4 text-slate-300 group-focus-within:text-[#3A9AFF]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                        </svg>
+                                    </div>
+                                    <input type="password" name="password" required placeholder="••••••••" autocomplete="off"
+                                        class="w-full px-4 py-4 bg-transparent outline-none text-slate-900 font-bold placeholder:text-slate-200 text-sm">
+                                </div>
+                            </div>
+
+                            <!-- Sign In Button -->
+                            <button type="submit"
+                                class="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-xl font-bold text-sm uppercase tracking-widest transition-all duration-300 shadow-xl shadow-slate-900/10 active:scale-[0.98]">
+                                Secure Access
+                            </button>
+                        </form>
+
+                        <div class="mt-10 pt-8 border-t border-slate-50 text-center">
+                            <p class="text-slate-300 text-[10px] font-bold uppercase tracking-widest">
+                                DOBHAL S.B. HEALTH CLUB Systems &copy; 2026
+                            </p>
+                        </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
