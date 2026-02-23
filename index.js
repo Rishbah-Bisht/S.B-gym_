@@ -34,9 +34,17 @@ app.use(helmet({
     contentSecurityPolicy: false, // Disable CSP for EJS inline scripts if needed, or configure properly
 }));
 
+// Diagnostics for Render
+console.log('--- Environment Diagnostics ---');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('MONGODB_URI defined:', !!process.env.MONGODB_URI);
+console.log('SESSION_SECRET defined:', !!process.env.SESSION_SECRET);
+console.log('-------------------------------');
+
 // Session configuration
 if (!process.env.MONGODB_URI) {
-    console.error('CRITICAL ERROR: MONGODB_URI is not defined in environment variables.');
+    console.error('CRITICAL ERROR: MONGODB_URI is missing from the Environment Variables.');
+    console.error('Action Required: Please add MONGODB_URI in Render Settings > Environment.');
     process.exit(1);
 }
 
