@@ -9,7 +9,7 @@ const helmet = require('helmet');
 const expressLayouts = require('express-ejs-layouts');
 
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo').default;
 const { ensureAuthenticated } = require('./middleware/auth');
 
 const app = express();
