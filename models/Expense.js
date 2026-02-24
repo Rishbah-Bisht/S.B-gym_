@@ -18,7 +18,7 @@ const expenseSchema = new mongoose.Schema({
     },
     paymentMode: {
         type: String,
-        enum: ['Cash', 'UPI', 'Bank'],
+        enum: ['Cash', 'UPI / Online', 'Bank Transfer'],
         required: true
     },
     expenseDate: {

@@ -22,7 +22,7 @@ const memberFeeSchema = new mongoose.Schema({
     },
     paymentMode: {
         type: String,
-        enum: ['Cash', 'UPI', null],
+        enum: ['Cash', 'UPI / Online', 'Card', null],
         default: null
     },
     visitStartDate: {
